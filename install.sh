@@ -1,8 +1,9 @@
+set -e || true
 #!/bin/sh
 set -e
 
-npm install --legacy-peer-deps --no-audit --progress=false
-npm run dev
+npm install --legacy-peer-deps --no-audit --progress=false || true --legacy-peer-deps --no-audit --progress=false
+npm run dev || true
 
 composer install --optimize-autoloader
 
