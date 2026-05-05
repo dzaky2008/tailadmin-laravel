@@ -1,0 +1,24 @@
+FROM ubuntu:22.04
+
+RUN apt update -y && \
+    DEBIAN_FRONTEND=noninteractive apt install -y apache2 \
+    php npm php-xml php-mbstring php-curl php-mysql php-gd \
+    unzip nano curl && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN curl -sS https://getcomposer.org/installer -o composer-setup.php && \
+    php composer-setup.php --install-dir=/usr/local/bin --filename=composer
+
+WORKDIR /var/www/app
+ADD . /var/www/app
+
+RUN mkdir -p bootstrap/cache storage/framework/cache storage/framework/sessions storage/framework/views && \
+    chown -R www-data:www-data bootstrap storage && \
+    chmod -R ug+rwx bootstrap storage
+
+RUN chmod +x install.sh && ./install.sh
+
+RUN chown -R www-data:www-data /var/www/app && chmod -R 755 /var/www/app
+
+EXPOSE 8090
+CMD php artisan serve --host=0.0.0.0 --port=8090
